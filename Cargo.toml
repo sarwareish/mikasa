@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 aes-gcm = "0.10.3"
+batnet = "1.1.1"
 dirs = "6.0.0"
 eframe = "0.31.1"
 epaint = "0.31.1"
