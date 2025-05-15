@@ -1803,9 +1803,9 @@ dependencies = [
 
 [[package]]
 name = "metamorph"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0decad06b68cf74537bdb3bdfd196d08ca2610296d0f5d81eead628bab548f5"
+checksum = "3295f651c78888280933fe7641770bbafd9d95d27a447aab7fe0068e744216f5"
 dependencies = [
  "rand",
  "regex",

